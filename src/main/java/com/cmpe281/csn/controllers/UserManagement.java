@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +18,7 @@ import com.cmpe281.csn.repositories.RoleRepository;
 import com.cmpe281.csn.repositories.UserRepository;
 import com.cmpe281.csn.response.UserListResponse;
 import com.cmpe281.csn.response.UserResponse;
+import com.cmpe281.csn.services.EmailService;
 
 @CrossOrigin
 @RestController
@@ -29,6 +29,9 @@ public class UserManagement {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
 	public UserResponse createUser(@RequestBody User user) {
@@ -47,6 +50,7 @@ public class UserManagement {
 				userResponse.setMsg("Successfully created User with id : "
 						+ savedUser.getId());
 				userResponse.setCode("202");
+				emailService.sendMail(savedUser.getEmail(), "User Creation", "User Created Successfully");
 			}
 
 		} catch (Exception e) {
@@ -58,7 +62,7 @@ public class UserManagement {
 	}
 
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
-	public ResponseEntity<?> getUserList() {
+	public UserListResponse getUserList() {
 		UserListResponse userResponse = new UserListResponse();
 		try {
 			Iterator<User> users = userRepository.findAll().iterator();
@@ -76,7 +80,7 @@ public class UserManagement {
 		}
 		
 
-		return ResponseEntity.ok(userResponse);
+		return userResponse;
 	}
 	
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)

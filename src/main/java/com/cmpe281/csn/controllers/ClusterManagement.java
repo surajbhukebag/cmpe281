@@ -29,13 +29,13 @@ public class ClusterManagement {
 
 	@Autowired
 	private ClusterRepository clusterRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AreaRepository areaRepository;
-	
+
 	@Autowired
 	private EmailService emailService;
 
@@ -43,17 +43,25 @@ public class ClusterManagement {
 	public ClusterResponse createCluster(@RequestBody Cluster requestedCluster) {
 		requestedCluster.setDateCreated(new Date().getTime());
 		requestedCluster.setStatusValue(StatusValue.NEW.name());
-		requestedCluster.setAdmin(userRepository.findOne(requestedCluster.getAdmin().getId()));
-		requestedCluster.setArea(areaRepository.findOne(requestedCluster.getArea().getId()));
+		requestedCluster.setAdmin(userRepository.findOne(requestedCluster
+				.getAdmin().getId()));
+		requestedCluster.setArea(areaRepository.findOne(requestedCluster
+				.getArea().getId()));
 		Cluster cluster = clusterRepository.save(requestedCluster);
 		ClusterResponse clusterResponse = new ClusterResponse();
 		clusterResponse.setCode("201");
 		clusterResponse.setMsg("Successfully created Cluster with id : "
 				+ cluster.getId());
 		clusterResponse.setCluster(cluster);
-		
-		emailService.sendMail(cluster.getAdmin().getEmail(), "Cluster Created", "Cluster created ");
-		
+
+		emailService.sendMail(cluster.getAdmin().getEmail(), "Cluster request",
+				"Cluster creation request created");
+		emailService.sendMail("moderator.neighborhood@gmail.com",
+				"Cluster creation request",
+				"Cluster creation request has been created by "
+						+ cluster.getAdmin().getFirstName() + " "
+						+ cluster.getAdmin().getLastName());
+
 		return clusterResponse;
 	}
 
@@ -65,9 +73,11 @@ public class ClusterManagement {
 		if (oldCluster != null) {
 			oldCluster.setName(cluster.getName());
 			oldCluster.setAddress(cluster.getAddress());
-			oldCluster.setAdmin(userRepository.findOne(cluster.getAdmin().getId()));
+			oldCluster.setAdmin(userRepository.findOne(cluster.getAdmin()
+					.getId()));
 			oldCluster.setAptNumber(cluster.getAptNumber());
-			oldCluster.setArea(areaRepository.findOne(cluster.getArea().getId()));
+			oldCluster.setArea(areaRepository
+					.findOne(cluster.getArea().getId()));
 			oldCluster.setBuildingNo(cluster.getBuildingNo());
 			Cluster newCluster = clusterRepository.save(oldCluster);
 			response.setCode("201");
@@ -80,7 +90,7 @@ public class ClusterManagement {
 		}
 		return response;
 	}
-	
+
 	@RequestMapping(value = "/updatecluster/{id}", method = RequestMethod.PUT)
 	public ClusterResponse updateClusterStatus(@PathVariable("id") Integer id) {
 		Cluster oldCluster = clusterRepository.findOne(id);
@@ -97,7 +107,6 @@ public class ClusterManagement {
 		}
 		return response;
 	}
-
 
 	@RequestMapping(value = "/cluster", method = RequestMethod.GET)
 	public GetAllClustersResponse getClusterList() {
@@ -120,14 +129,34 @@ public class ClusterManagement {
 		}
 		return response;
 	}
-	
+
 	@RequestMapping(value = "/clustertobecreated", method = RequestMethod.GET)
 	public GetAllClustersResponse getClusterToBeCreatedList() {
-		List<Cluster> clusterList = clusterRepository.findByClusterStatus("NEW");
+		List<Cluster> clusterList = clusterRepository
+				.findByClusterStatus("NEW");
 		GetAllClustersResponse response = new GetAllClustersResponse();
 		if (clusterList != null) {
 			response.setCode("201");
-			response.setMsg("Totally " + clusterList.size() + " clusters available");
+			response.setMsg("Totally " + clusterList.size()
+					+ " clusters available");
+			response.setClusterList(clusterList);
+
+		} else {
+			response.setCode("201");
+			response.setMsg("No clusters available");
+		}
+		return response;
+	}
+
+	@RequestMapping(value = "/activeclusters", method = RequestMethod.GET)
+	public GetAllClustersResponse getActiveCluster() {
+		List<Cluster> clusterList = clusterRepository
+				.findByClusterStatus("ACTIVE");
+		GetAllClustersResponse response = new GetAllClustersResponse();
+		if (clusterList != null) {
+			response.setCode("201");
+			response.setMsg("Totally " + clusterList.size()
+					+ " clusters available");
 			response.setClusterList(clusterList);
 
 		} else {
@@ -162,6 +191,24 @@ public class ClusterManagement {
 		cr.setCode("201");
 		cr.setMsg("Cluster Deleted");
 		return cr;
+	}
+
+	@RequestMapping(value = "/adminclusters/{id}", method = RequestMethod.GET)
+	public GetAllClustersResponse getAdminCluster(@PathVariable("id") Integer id) {
+		List<Cluster> clusterList = clusterRepository
+				.findByAdmin(id);
+		GetAllClustersResponse response = new GetAllClustersResponse();
+		if (clusterList != null) {
+			response.setCode("201");
+			response.setMsg("Totally " + clusterList.size()
+					+ " clusters available");
+			response.setClusterList(clusterList);
+
+		} else {
+			response.setCode("201");
+			response.setMsg("No clusters available");
+		}
+		return response;
 	}
 
 }

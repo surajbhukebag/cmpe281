@@ -4,6 +4,8 @@ public enum StatusValue {
 	ACTIVE,
 	NEW,
 	DRAFT,
-	DELETED
-	
+	DELETED,
+	CREATED,
+	REQUESTED,
+		
 }
