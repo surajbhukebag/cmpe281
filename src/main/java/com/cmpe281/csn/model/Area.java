@@ -20,8 +20,6 @@ public class Area {
 	@OneToOne(targetEntity=City.class, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	private City city;
 	
-	private String state;
-	
 	private String pincode;	
 	
 	public Integer getId() {
@@ -39,14 +37,6 @@ public class Area {
 
 	public void setCity(City city) {
 		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
 	}
 
 	public String getPincode() {

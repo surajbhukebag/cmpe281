@@ -7,8 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.OneToOne;
 
-import com.cmpe281.csn.constants.StatusValue;
-
 @Entity
 public class Cluster {
 
@@ -19,11 +17,7 @@ public class Cluster {
 	private String name;
 	
 	private String address;
-	
-	private String facebook;
-	
-	private String twitter;
-	
+		
 	private String buildingNo;
 	
 	private String aptNumber;
@@ -52,22 +46,6 @@ public class Cluster {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public String getFacebook() {
-		return facebook;
-	}
-
-	public void setFacebook(String facebook) {
-		this.facebook = facebook;
-	}
-
-	public String getTwitter() {
-		return twitter;
-	}
-
-	public void setTwitter(String twitter) {
-		this.twitter = twitter;
 	}
 
 	public String getBuildingNo() {

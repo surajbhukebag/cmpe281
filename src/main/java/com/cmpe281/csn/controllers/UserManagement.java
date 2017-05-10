@@ -1,6 +1,7 @@
 package com.cmpe281.csn.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,12 +34,21 @@ public class UserManagement {
 	public UserResponse createUser(@RequestBody User user) {
 		UserResponse userResponse = new UserResponse();
 		try {
-			user.setRole(roleRepository.findOne(user.getRole().getId()));
-			User savedUser = userRepository.save(user);
-			userResponse.setUser(savedUser);
-			userResponse.setMsg("Successfully created User with id : "
-					+ savedUser.getId());
-			userResponse.setCode("202");
+			User checkUsername = userRepository.findByUsername(user.getUsername());
+			if(checkUsername != null){
+				userResponse.setMsg("Username Already Exists");
+				userResponse.setCode("400");
+			}
+			else {
+				user.setDateCreated(new Date().getTime());
+				user.setRole(roleRepository.findOne(user.getRole().getId()));
+				User savedUser = userRepository.save(user);
+				userResponse.setUser(savedUser);
+				userResponse.setMsg("Successfully created User with id : "
+						+ savedUser.getId());
+				userResponse.setCode("202");
+			}
+
 		} catch (Exception e) {
 			userResponse.setMsg("Something went wrong");
 			userResponse.setCode("400");
@@ -119,6 +129,7 @@ public class UserManagement {
 			oldUser.setFirstName(user.getFirstName());
 			oldUser.setLastName(user.getLastName());
 			oldUser.setUsername(user.getUsername());
+			oldUser.setPassword(user.getPassword());
 			User savedUser = userRepository.save(oldUser);
 			userResponse.setUser(savedUser);
 			userResponse.setMsg("Successfully updated User with id : "

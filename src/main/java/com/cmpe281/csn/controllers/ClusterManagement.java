@@ -21,6 +21,7 @@ import com.cmpe281.csn.repositories.UserRepository;
 import com.cmpe281.csn.response.ClusterResponse;
 import com.cmpe281.csn.response.CommonResponse;
 import com.cmpe281.csn.response.GetAllClustersResponse;
+import com.cmpe281.csn.services.EmailService;
 
 @CrossOrigin
 @RestController
@@ -34,6 +35,9 @@ public class ClusterManagement {
 	
 	@Autowired
 	private AreaRepository areaRepository;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@RequestMapping(value = "/cluster", method = RequestMethod.POST)
 	public ClusterResponse createCluster(@RequestBody Cluster requestedCluster) {
@@ -47,6 +51,9 @@ public class ClusterManagement {
 		clusterResponse.setMsg("Successfully created Cluster with id : "
 				+ cluster.getId());
 		clusterResponse.setCluster(cluster);
+		
+		emailService.sendMail(cluster.getAdmin().getEmail(), "Cluster Created", "Cluster created ");
+		
 		return clusterResponse;
 	}
 
@@ -62,8 +69,6 @@ public class ClusterManagement {
 			oldCluster.setAptNumber(cluster.getAptNumber());
 			oldCluster.setArea(areaRepository.findOne(cluster.getArea().getId()));
 			oldCluster.setBuildingNo(cluster.getBuildingNo());
-			oldCluster.setFacebook(cluster.getFacebook());
-			oldCluster.setTwitter(cluster.getTwitter());
 			Cluster newCluster = clusterRepository.save(oldCluster);
 			response.setCode("201");
 			response.setMsg("Successfully updated Cluster with id : "
@@ -121,12 +126,6 @@ public class ClusterManagement {
 		List<Cluster> clusterList = clusterRepository.findByClusterStatus("NEW");
 		GetAllClustersResponse response = new GetAllClustersResponse();
 		if (clusterList != null) {
-	/*		Iterator<Cluster> iterator = clusterList.iterator();
-			List<Cluster> list = new ArrayList<Cluster>();
-			while (iterator.hasNext()) {
-				list.add(iterator.next());
-			}*/
-
 			response.setCode("201");
 			response.setMsg("Totally " + clusterList.size() + " clusters available");
 			response.setClusterList(clusterList);

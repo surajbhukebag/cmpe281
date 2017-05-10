@@ -15,8 +15,6 @@ public class City {
 	
 	private String state;
 	
-	private String pincode;
-	
 	public Integer getId() {
 		return id;
 	}
@@ -41,15 +39,5 @@ public class City {
 		this.state = state;
 	}
 
-	public String getPincode() {
-		return pincode;
-	}
-
-	public void setPincode(String pincode) {
-		this.pincode = pincode;
-	}
-	
-	
-	
 
 }
