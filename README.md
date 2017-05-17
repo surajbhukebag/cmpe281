@@ -1,6 +1,6 @@
 # cmpe281
 
-REST APIs for community based socia network.
+REST APIs for community based social network.
 
 Use  mvn spring-boot:run to run applicaiton.
 
