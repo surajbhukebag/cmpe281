@@ -26,7 +26,7 @@ public class LoginManagement {
 		try {
 
 			User user = userRepository.findByUsername(login.getUsername());
-			if (user.getPassword() != null
+			if (user != null && user.getPassword() != null
 					&& user.getPassword().equals(login.getPassword())) {
 				loginResponse.setCode("202");
 				loginResponse.setMsg("User authenticated");

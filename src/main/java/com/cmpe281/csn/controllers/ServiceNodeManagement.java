@@ -1,6 +1,7 @@
 package com.cmpe281.csn.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe281.csn.model.ServiceNode;
 import com.cmpe281.csn.repositories.ServiceNodeRepository;
+import com.cmpe281.csn.repositories.UserRepository;
 import com.cmpe281.csn.response.ServiceNodeListResponse;
 import com.cmpe281.csn.response.ServiceNodeResponse;
 
@@ -25,10 +27,15 @@ public class ServiceNodeManagement {
 	@Autowired
 	private ServiceNodeRepository serviceNodeRepository;
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@RequestMapping(value = "/servicenode", method = RequestMethod.POST)
 	public ServiceNodeResponse createServiceNode(@RequestBody ServiceNode serviceNode) {
 		ServiceNodeResponse serviceNodeResponse = new ServiceNodeResponse();
 		try {
+			serviceNode.setCreatedBy(userRepository.findOne(serviceNode.getCreatedBy().getId()));
+			serviceNode.setDateCreated(new Date().getTime());
 			ServiceNode service = serviceNodeRepository.save(serviceNode);
 			serviceNodeResponse.setServiceNode(service);
 			serviceNodeResponse.setMsg("Successfully created Service node with id : "
@@ -62,11 +69,11 @@ public class ServiceNodeManagement {
 	}
 	
 	@RequestMapping(value = "/servicenode/{id}", method = RequestMethod.GET)
-	public ServiceNodeResponse getServiceNode(@PathVariable("id") Integer id) {
-		ServiceNodeResponse serviceNodeResponse = new ServiceNodeResponse();
+	public ServiceNodeListResponse getServiceNode(@PathVariable("id") Integer id) {
+		ServiceNodeListResponse serviceNodeResponse = new ServiceNodeListResponse();
 		try {
-			ServiceNode service = serviceNodeRepository.findOne(id);
-			serviceNodeResponse.setServiceNode(service);
+			List<ServiceNode> service = serviceNodeRepository.findByCreatedBy(id);
+			serviceNodeResponse.setServiceNodeList(service);
 			serviceNodeResponse.setMsg("Successfully fetched service node");
 			serviceNodeResponse.setCode("202");
 		} catch (Exception e) {

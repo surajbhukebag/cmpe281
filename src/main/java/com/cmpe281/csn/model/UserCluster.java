@@ -1,6 +1,5 @@
 package com.cmpe281.csn.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,10 +13,10 @@ public class UserCluster {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	
-	@OneToOne(targetEntity=User.class, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=User.class, fetch=FetchType.EAGER)
 	private User user;
 	
-	@OneToOne(targetEntity=Cluster.class, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=Cluster.class, fetch=FetchType.EAGER)
 	private Cluster cluster;
 	
 	private String status;

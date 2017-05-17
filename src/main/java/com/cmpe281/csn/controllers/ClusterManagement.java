@@ -72,13 +72,10 @@ public class ClusterManagement {
 		ClusterResponse response = new ClusterResponse();
 		if (oldCluster != null) {
 			oldCluster.setName(cluster.getName());
-			oldCluster.setAddress(cluster.getAddress());
 			oldCluster.setAdmin(userRepository.findOne(cluster.getAdmin()
 					.getId()));
-			oldCluster.setAptNumber(cluster.getAptNumber());
 			oldCluster.setArea(areaRepository
 					.findOne(cluster.getArea().getId()));
-			oldCluster.setBuildingNo(cluster.getBuildingNo());
 			Cluster newCluster = clusterRepository.save(oldCluster);
 			response.setCode("201");
 			response.setMsg("Successfully updated Cluster with id : "
@@ -101,6 +98,8 @@ public class ClusterManagement {
 			response.setCode("201");
 			response.setMsg("Successfully updated Cluster Status ");
 			response.setCluster(newCluster);
+			emailService.sendMail(newCluster.getAdmin().getEmail(), "Cluster Activated",
+					"Cluster activation request processed");
 		} else {
 			response.setCode("400");
 			response.setMsg("Cluster Updation failed");
@@ -187,16 +186,23 @@ public class ClusterManagement {
 	@RequestMapping(value = "/cluster/{id}", method = RequestMethod.DELETE)
 	public CommonResponse deleteCluster(@PathVariable("id") Integer id) {
 		CommonResponse cr = new CommonResponse();
-		clusterRepository.delete(id);
-		cr.setCode("201");
-		cr.setMsg("Cluster Deleted");
+		Cluster oldCluster = clusterRepository.findOne(id);
+		if (oldCluster != null) {
+			oldCluster.setStatusValue(StatusValue.DELETED.name());
+			clusterRepository.save(oldCluster);
+			cr.setCode("201");
+			cr.setMsg("Cluster Deleted");
+		} else {
+			cr.setCode("400");
+			cr.setMsg("Cluster Deletion failed");
+		}
+
 		return cr;
 	}
 
 	@RequestMapping(value = "/adminclusters/{id}", method = RequestMethod.GET)
 	public GetAllClustersResponse getAdminCluster(@PathVariable("id") Integer id) {
-		List<Cluster> clusterList = clusterRepository
-				.findByAdmin(id);
+		List<Cluster> clusterList = clusterRepository.findByAdminAndStatus(id, "DELETED");
 		GetAllClustersResponse response = new GetAllClustersResponse();
 		if (clusterList != null) {
 			response.setCode("201");

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe281.csn.model.Service;
-import com.cmpe281.csn.repositories.ServiceNodeRepository;
 import com.cmpe281.csn.repositories.ServiceRepository;
 import com.cmpe281.csn.repositories.UserRepository;
 import com.cmpe281.csn.response.ServiceListResponse;
@@ -28,18 +27,14 @@ public class ServiceManagement {
 	private ServiceRepository serviceRepository;
 
 	@Autowired
-	private ServiceNodeRepository serviceNodeRepository;
-	
-	@Autowired
 	private UserRepository userRepository;
 
 	@RequestMapping(value = "/service", method = RequestMethod.POST)
 	public ServiceResponse createService(@RequestBody Service service) {
 		ServiceResponse serviceResponse = new ServiceResponse();
 		try {
-			service.setServiceNode(serviceNodeRepository.findOne(service
-					.getServiceNode().getId()));
-			service.setCreatedBy(userRepository.findOne(service.getCreatedBy().getId()));
+			service.setCreatedBy(userRepository.findOne(service.getCreatedBy()
+					.getId()));
 			service.setDateCreated(new Date().getTime());
 			Service createdservice = serviceRepository.save(service);
 			serviceResponse.setService(createdservice);
@@ -60,8 +55,6 @@ public class ServiceManagement {
 		ServiceResponse serviceResponse = new ServiceResponse();
 		try {
 			Service oldService = serviceRepository.findOne(id);
-			oldService.setServiceNode(serviceNodeRepository.findOne(service
-					.getServiceNode().getId()));
 			oldService.setServiceName(service.getServiceName());
 			Service updatedservice = serviceRepository.save(oldService);
 			serviceResponse.setService(updatedservice);
@@ -75,7 +68,7 @@ public class ServiceManagement {
 
 		return serviceResponse;
 	}
-	
+
 	@RequestMapping(value = "/service/{id}", method = RequestMethod.GET)
 	public ServiceResponse getService(@PathVariable("id") Integer id) {
 		ServiceResponse serviceResponse = new ServiceResponse();
@@ -92,14 +85,15 @@ public class ServiceManagement {
 
 		return serviceResponse;
 	}
-	
+
 	@RequestMapping(value = "/service", method = RequestMethod.GET)
 	public ServiceListResponse getAllServices() {
 		ServiceListResponse serviceResponse = new ServiceListResponse();
 		try {
-			Iterator<Service> serviceIterator = serviceRepository.findAll().iterator();
+			Iterator<Service> serviceIterator = serviceRepository.findAll()
+					.iterator();
 			List<Service> serviceList = new ArrayList<Service>();
-			while(serviceIterator.hasNext()) {
+			while (serviceIterator.hasNext()) {
 				serviceList.add(serviceIterator.next());
 			}
 			serviceResponse.setServices(serviceList);
@@ -112,14 +106,12 @@ public class ServiceManagement {
 
 		return serviceResponse;
 	}
-	
-	
+
 	@RequestMapping(value = "/service/{id}", method = RequestMethod.DELETE)
 	public ServiceResponse deleteService(@PathVariable("id") Integer id) {
 		ServiceResponse serviceResponse = new ServiceResponse();
 		try {
 			Service service = serviceRepository.findOne(id);
-			service.setServiceNode(null);
 			service.setCreatedBy(null);
 			serviceRepository.save(service);
 			serviceRepository.delete(id);

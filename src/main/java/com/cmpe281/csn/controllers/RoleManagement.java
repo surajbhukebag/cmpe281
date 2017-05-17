@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe281.csn.model.Role;
 import com.cmpe281.csn.repositories.RoleRepository;
+import com.cmpe281.csn.repositories.UserRepository;
 import com.cmpe281.csn.response.RoleListResponse;
 import com.cmpe281.csn.response.RoleResponse;
 
@@ -23,6 +24,9 @@ public class RoleManagement {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@RequestMapping(value = "/role", method = RequestMethod.POST)
 	public RoleResponse createCluster(@RequestBody Role role) {
@@ -30,6 +34,7 @@ public class RoleManagement {
 		RoleResponse roleResponse = new RoleResponse();
 
 		try {
+			role.setCreatedBy(userRepository.findOne(role.getCreatedBy().getId()));
 			Role roleCreated = roleRepository.save(role);
 			roleResponse.setRole(roleCreated);
 			roleResponse.setCode("202");
@@ -125,6 +130,27 @@ public class RoleManagement {
 			roleRepository.delete(id);
 			roleResponse.setCode("202");
 			roleResponse.setMsg("Role Deleted ");
+
+		} catch (Exception e) {
+
+			roleResponse.setCode("505");
+			roleResponse.setMsg("Something went wrong");
+
+		}
+		return roleResponse;
+	}
+	
+	@RequestMapping(value = "/createdbyrole/{id}", method = RequestMethod.GET)
+	public RoleListResponse getRoleByCreatedBy(@PathVariable("id") Integer id) {
+
+		RoleListResponse roleResponse = new RoleListResponse();
+
+		try {
+			List<Role> roleList = roleRepository.findByCreatedBy(id);
+			
+			roleResponse.setRoles(roleList);
+			roleResponse.setCode("202");
+			roleResponse.setMsg("Roles fetched ");
 
 		} catch (Exception e) {
 

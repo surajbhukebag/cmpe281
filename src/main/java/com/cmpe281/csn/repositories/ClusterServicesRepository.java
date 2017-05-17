@@ -11,7 +11,10 @@ import com.cmpe281.csn.model.ClusterServices;
 public interface ClusterServicesRepository extends CrudRepository<ClusterServices, Integer> {
 	
 
-    @Query(value="SELECT * FROM Cluster_Services cs where cs.cluster_id = ?1", nativeQuery = true) 
+    @Query(value="SELECT * FROM cluster_services cs where cs.cluster_id = ?1", nativeQuery = true) 
     List<ClusterServices> findByCluster(@Param("id") Integer id);
+    
+    @Query(value="SELECT * FROM cluster_services cs where cs.created_by_id = ?1", nativeQuery = true) 
+    List<ClusterServices> findByCreatedBy(@Param("createdBy") Integer createdBy);
 
 }

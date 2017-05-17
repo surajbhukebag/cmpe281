@@ -1,6 +1,5 @@
 package com.cmpe281.csn.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,7 +16,7 @@ public class Area {
 	
 	private String name;
 	
-	@OneToOne(targetEntity=City.class, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=City.class, fetch=FetchType.EAGER)
 	private City city;
 	
 	private String pincode;	

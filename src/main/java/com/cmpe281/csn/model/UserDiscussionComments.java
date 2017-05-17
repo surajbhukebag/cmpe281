@@ -1,6 +1,5 @@
 package com.cmpe281.csn.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,17 +7,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Service {
+public class UserDiscussionComments {
 	
 	@javax.persistence.Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	
-	private String serviceName;
+	@OneToOne(targetEntity=UserDiscussions.class, fetch=FetchType.EAGER)
+	private UserDiscussions userDiscussion;
 	
-	@OneToOne(targetEntity=User.class,  cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=User.class, fetch=FetchType.EAGER)
 	private User createdBy;
 	
+	private String comments;
+
 	private long dateCreated;
 
 	public Integer getId() {
@@ -29,12 +31,12 @@ public class Service {
 		this.id = id;
 	}
 
-	public String getServiceName() {
-		return serviceName;
+	public UserDiscussions getUserDiscussion() {
+		return userDiscussion;
 	}
 
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
+	public void setUserDiscussion(UserDiscussions userDiscussion) {
+		this.userDiscussion = userDiscussion;
 	}
 
 	public User getCreatedBy() {
@@ -45,6 +47,14 @@ public class Service {
 		this.createdBy = createdBy;
 	}
 
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
 	public long getDateCreated() {
 		return dateCreated;
 	}
@@ -52,6 +62,6 @@ public class Service {
 	public void setDateCreated(long dateCreated) {
 		this.dateCreated = dateCreated;
 	}
-
-
+	
+	
 }

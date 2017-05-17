@@ -1,6 +1,5 @@
 package com.cmpe281.csn.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,19 +14,13 @@ public class Cluster {
 	private Integer id;
 	
 	private String name;
-	
-	private String address;
 		
-	private String buildingNo;
-	
-	private String aptNumber;
-	
 	private long dateCreated;
 	
-	@OneToOne(targetEntity=User.class,  cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=User.class, fetch=FetchType.EAGER)
 	private User admin;	
 	
-	@OneToOne(targetEntity=Area.class,  cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity=Area.class, fetch=FetchType.EAGER)
 	private Area area;
 	
 	private String statusValue;
@@ -38,30 +31,6 @@ public class Cluster {
 
 	public void setStatusValue(String statusValue) {
 		this.statusValue = statusValue;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getBuildingNo() {
-		return buildingNo;
-	}
-
-	public void setBuildingNo(String buildingNo) {
-		this.buildingNo = buildingNo;
-	}
-
-	public String getAptNumber() {
-		return aptNumber;
-	}
-
-	public void setAptNumber(String aptNumber) {
-		this.aptNumber = aptNumber;
 	}
 
 	public long getDateCreated() {

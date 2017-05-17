@@ -1,6 +1,5 @@
 package com.cmpe281.csn.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,6 +17,12 @@ public class User {
 	
 	private String lastName;
 	
+	@OneToOne(targetEntity=Role.class, fetch=FetchType.EAGER)
+	private Role role;
+	
+	@OneToOne(targetEntity=Cluster.class, fetch=FetchType.EAGER)
+	private Cluster cluster;
+	
 	private String username;
 	
 	private String password;
@@ -30,9 +35,27 @@ public class User {
 	
 	private long dateCreated;
 	
-	@OneToOne(targetEntity=Role.class,  cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	private Role role;
+	private String status;
 	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+	private User createdBy;
+	
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -111,6 +134,15 @@ public class User {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public Cluster getCluster() {
+		return cluster;
+	}
+
+	public void setCluster(Cluster cluster) {
+		this.cluster = cluster;
 	}	
 
+	
 }
